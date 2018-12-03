@@ -1,8 +1,8 @@
-// Version 2018.12.04
+// Version 2017.12.04
 
 (function(){
 
-//var serverURL = "wss://localhost:33330/";
+var serverURL = "wss://localhost:33330/";
 const SERVICE_UUID     = "928a3d40-e8bf-4b2b-b443-66d2569aed50";
 const NOTIFY_CHAR_UUID = "928a3d41-e8bf-4b2b-b443-66d2569aed50";
 const WRITE_CHAR_UUID  = "928a3d42-e8bf-4b2b-b443-66d2569aed50";
@@ -19,7 +19,6 @@ function errLog(str){
 bone = (()=> {
   function bleComm(){}
   bleComm.prototype = {
-    bleDevice : null,
     notifyChar : null,
     writeChar : null,
     statChar : null,
@@ -54,14 +53,13 @@ bone = (()=> {
               bleService.getCharacteristic(WRITE_CHAR_UUID).then((writeChar)=>{
                 bleService.getCharacteristic(STAT_CHAR_UUID).then((statChar)=>{
                   console.log("キャラクタリスティックの取得に成功しました。");
-                  this.bleDevice = bleDevice;
                   this.writeChar = writeChar;
                   this.notifyChar = notifyChar;
                   this.statChar = statChar;
 
                   // デバイスのビジーチェック
                   statChar.readValue().then((stat)=>{
-//                    console.log("busy status" + stat.getInt8(0));
+                    console.log("busy status" + stat.getInt8(0));
                     console.log("Device version" + stat.getInt8(1)); 
                     if (stat.getInt8(0) == 0) { // not busy
                       notifyChar.oncharacteristicvaluechanged = this.bleEvent;
@@ -69,48 +67,29 @@ bone = (()=> {
                       console.log("BLEデバイスとの接続に成功");
                       this.status = 2;
                       resolve(1);
-                    } else { // busy
+		    } else { // busy
           	       console.log("device is busy");
           	       reject("device is busy");
-                    }
-                  });
+		    }
+      		  });
 
-                }).catch(e=>{
-                  bleDevice.gatt.disconnect();
-                  reject("BLEデバイス異常(3)、再度お試しください");
                 });
-              }).catch(e=>{
-                bleDevice.gatt.disconnect();
-                reject("BLEデバイス異常(2)、再度お試しください");
               });
-            }).catch(e=>{
-              bleDevice.gatt.disconnect();
-              reject("BLEデバイス異常(1)、再度お試しください");
             });
-          }).catch(e=>{
-            bleDevice.gatt.disconnect();
-            reject("BLEデバイスとの接続失敗、再度お試しください");
           });
         }).catch(e=>{
-          console.log("BLEデバイスとの接続に失敗しました");
-          reject(e);
+        reject(e);
         });
       });
     },
-    deInit: function() {
-      if (this.bleDevice != null) {
-        this.bleDevice.gatt.disconnect();
-      }
-
-    },
     bleEvent: function(event) {  //ArrayBuffer
-//      console.log("@@@@@@ デバイスからの通知");
+      console.log("@@@@@@ デバイスからの通知");
 
       var len = event.currentTarget.value.byteLength;
       var buffer = new Uint8Array(len);
       for (var cnt=0;cnt<len;cnt++) {
         buffer[cnt] = event.currentTarget.value.getInt8(cnt);
-//        console.log("@@@@@@ byte"+cnt+" data:"+buffer[cnt]);
+        console.log("@@@@@@ byte"+cnt+" data:"+buffer[cnt]);
       }
 
       if (bone.status == 2) {
@@ -130,18 +109,6 @@ bone = (()=> {
       }
     },
 
-    bleWrite: function(buffer){
-      return new Promise((resolve,reject)=>{
-        this.writeChar.writeValue(buffer).then(()=> {
-          resolve(0);
-        }).catch(e=>{
-          console.log(e);
-          resolve(buffer);
-        });
-      });
-
-    },
-
     send: function(func,data){
       return new Promise((resolve, reject)=>{
 
@@ -151,7 +118,7 @@ bone = (()=> {
 //      });
 
 
-//        console.log("@@@@@@@ bone.send()");
+        console.log("@@@@@@@ bone.send()");
 //        console.log("@1");
         if(this.busy != 0) {
 	  console.log("@@@@@@@ bone.send() -- busy");
@@ -177,34 +144,20 @@ bone = (()=> {
        
 //        console.log("@@@@@@@ bone.send()01");
         this.queue.set(this.session,(data)=>{
-//          console.log("@@@@@@@ bone.send()03");
+          console.log("@@@@@@@ bone.send()03");
 	  this.busy=0;
           resolve(data);
         });
         
 //        console.log("@@@@@@@ bone.send()02");
-//        this.writeChar.writeValue(buf);
-        this.bleWrite(buf).then((retval)=> {
-          if (retval == 0) {
-//            console.log("@@@@@@@ bone.send()02a");
-          } else {
-            console.log("Retry BLE write");
-            this.writeChar.writeValue(retval).then(()=>{
-            }).catch(error=>{
-              bone.deInit();
-              reject("通信異常が発生しました -- 接続解除します");
-            });
-          }
-        });
-
-
+        this.writeChar.writeValue(buf);
         buf=null;
         this.session ++;
         if(this.session > 0xffff){
           this.session = 0;
         }
-//      }).catch(e=>{
-//        console.log("bone.send() : ",e);
+      }).catch(error=>{
+        console.log("bone.send() error: ",error);
       });
     },
 
@@ -243,7 +196,7 @@ bone = (()=> {
     },
 
     onEvent: function(data){
- //     console.log("@@@@@@@ bone.onEvent()");
+      console.log("@@@@@@@ bone.onEvent()");
       if(!(data instanceof Uint8Array)){
         errLog("type error: Please using with Uint8Array buffer.");
         return;

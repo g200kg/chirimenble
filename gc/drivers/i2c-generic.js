@@ -23,84 +23,97 @@ GENERIC_I2C.prototype = {
   // read array data
   readArray: function(length) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-		var readData = await this.i2cSlave.readBytes(length);
-        resolve(readData);
+      try {
+        if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var readData = await this.i2cSlave.readBytes(length);
+          resolve(readData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
     });
   },
 
   // read data with subaddress(8bit)
   read8SA: function(subaddress) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-		var readData = await this.i2cSlave.read8(subaddress);
-        resolve(readData);
+      try {
+        if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var readData = await this.i2cSlave.read8(subaddress);
+          resolve(readData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
     });
   },
 
   // read data with subaddress(16bit)
   read16SA: function(subaddress) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-		var readData = await this.i2cSlave.read16(subaddress);
-        resolve(readData);
+      try {
+      	  if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var readData = await this.i2cSlave.read16(subaddress);
+          resolve(readData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
     });
   },
 
   // write array data
   writeArray: function(dataArray) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-        var resolveData = await this.i2cSlave.writeBytes(dataArray); 
-        resolve(resolveData);
+      try {
+        if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var resolveData = await this.i2cSlave.writeBytes(dataArray); 
+          resolve(resolveData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
     });
   },
 
   // write data with subaddress(8bit)
   write8SA: function(subaddress,data) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-		var resolveData = await this.i2cSlave.write8(subaddress,data);
-        resolve(resolveData);
+      try {
+        if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var resolveData = await this.i2cSlave.write8(subaddress,data);
+          resolve(resolveData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
     });
   },
 
   // write data with subaddress(16bit)
   write16SA: function(subaddress,data) {
     return new Promise(async (resolve, reject)=>{
-      if(this.i2cSlave == null){
-        reject("i2cSlave Address does'nt yet open!");
-      }else{
-		var resolveData = await this.i2cSlave.write16(subaddress,data);
-        resolve(resolveData);
+      try {
+        if(this.i2cSlave == null){
+          reject("i2cSlave Address does'nt yet open!");
+        }else{
+          var resolveData = await this.i2cSlave.write16(subaddress,data);
+          resolve(resolveData);
+        }
+      } catch(e) {
+        reject(e);
       }
-    }).catch((reason)=>{
-        reject(reason);
+
     });
   }
 
