@@ -1,13 +1,13 @@
 "use strict";
-
 const DEVICE_UUID     = "928a3d40-e8bf-4b2b-b443-66d2569aed50";
 let connectButton;
 
-var head;
+var head1, head2;
 window.addEventListener(
   "load",
   function() {
-    head = document.querySelector("#head");
+    head1 = document.querySelector("#head1");
+    head2 = document.querySelector("#head2");
     connectButton = document.querySelector("#BLECONN");
     connectButton.addEventListener("click", mainFunction);
   },
@@ -15,32 +15,37 @@ window.addEventListener(
 );
 
 async function mainFunction() {
-
-  // Initialize WebI2C
   var bleDevice = await navigator.bluetooth.requestDevice({
     filters: [{ services: [DEVICE_UUID] }] });
   var i2cAccess = await navigator.requestI2CAccess(bleDevice);
   connectButton.hidden = true;
   try {
     var port = i2cAccess.ports.get(1);
-    var ads1015 = new ADS1015(port, 0x48);
-    await ads1015.init();
-    console.log("new");
+    var groveLight = new GROVELIGHT(port, 0x29);
+    var adt7410 = new ADT7410(port, 0x48);
+    await groveLight.init();
+    await adt7410.init();
+
     while (1) {
       try {
-        var value = await ads1015.read(0);
-        console.log("value:", value);
-        head.innerHTML = value;
+        var lightValue = await groveLight.read();
+        // console.log('lightValue:', lightValue);
+        head1.innerHTML = lightValue;
       } catch (error) {
-        if (error.code != 4) {
-          head.innerHTML = "ERROR";
-        }
-        console.log("error: code:" + error.code + " message:" + error.message);
+        console.log("groveLight error:" + error);
       }
-      await sleep(100);
+
+      try {
+        var tempValue = await adt7410.read();
+        // console.log('tempValue:', tempValue);
+        head2.innerHTML = tempValue;
+      } catch (error) {
+        console.log("adt7410 error:" + error);
+      }
+      sleep(500);
     }
   } catch (error) {
-    console.log("ADS1015.init error" + error.message);
+    console.error("error", error);
   }
 }
 

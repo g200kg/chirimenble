@@ -1,13 +1,12 @@
 <!doctype html>
-
 <html>
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-  <title>i2c-ADS1015</title>
+  <title>i2c-Generic</title>
   <script src="../../polyfill/blePolyfill.js"></script>
-  <script src="../../drivers/i2c-ADS1015.js"></script>
+  <script src="./i2c-ST7032.js"></script>
   <script src="./main.js"></script>
   <style>
     p {
@@ -27,9 +26,6 @@
 <body>
   <div><input type="button" id="BLECONN" style="width:100%;background-color:#03A9F4;color:#fff;font-weight: bold;" value="BLE接続"></div>
   <div><input type="button" id="BLEDISS" style="width:100%;background-color:#FF5722;color:#fff;font-weight: bold;" value="BLE切断" hidden></div>
-  <P><a href="https://www.adafruit.com/product/1083" target="_blank">ADS1015 12-BIT 4ch ADC</a></P>
-  <a href="./schematic.png" target="_blank"><img src="./schematic.png" height="350px"></a>
-  <p id="head">init</p>
 </body>
 
 </html>

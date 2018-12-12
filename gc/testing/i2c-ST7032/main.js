@@ -22,12 +22,21 @@ async function mainFunction() {
     var i2cAccess = await navigator.requestI2CAccess(bleDevice);
     connectButton.hidden = true;
     var port = i2cAccess.ports.get(1);
-    var adt7410 = new ADT7410(port, 0x48);
-    await adt7410.init();
-    while (1) {
-      var value = await adt7410.read();
-      // console.log('value:', value);
-      head.innerHTML = value ? value : head.innerHTML;
+    var generic = new GENERIC_I2C(port, 0x3e);
+    await generic.init();
+
+    while(1) {
+      await generic.clearLcd();
+      await generic.homeLcd();
+//      await generic.setCharLcd(0x41);
+      await generic.cursorLcd(0,0);
+      await sleep(10);
+      await generic.setStringLcd('hellow world');
+      await sleep(10);
+      await generic.cursorLcd(0,1);
+      await sleep(10);
+      await generic.setStringLcd('0123456789acbdef');
+
       await sleep(1000);
     }
   } catch (error) {

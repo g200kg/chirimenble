@@ -15,32 +15,29 @@ window.addEventListener(
 );
 
 async function mainFunction() {
-
-  // Initialize WebI2C
   var bleDevice = await navigator.bluetooth.requestDevice({
     filters: [{ services: [DEVICE_UUID] }] });
   var i2cAccess = await navigator.requestI2CAccess(bleDevice);
   connectButton.hidden = true;
+
   try {
     var port = i2cAccess.ports.get(1);
-    var ads1015 = new ADS1015(port, 0x48);
-    await ads1015.init();
-    console.log("new");
+    var pca9685 = new PCA9685(port, 0x40);
+    var angle = 0;
+    // console.log("angle"+angle);
+    // servo setting for sg90
+    // Servo PWM pulse: min=0.0011[sec], max=0.0019[sec] angle=+-60[deg]
+    await pca9685.init(0.001, 0.002, 30);
     while (1) {
-      try {
-        var value = await ads1015.read(0);
-        console.log("value:", value);
-        head.innerHTML = value;
-      } catch (error) {
-        if (error.code != 4) {
-          head.innerHTML = "ERROR";
-        }
-        console.log("error: code:" + error.code + " message:" + error.message);
-      }
-      await sleep(100);
+      angle = angle <= -30 ? 30 : -30;
+      // console.log("angle"+angle);
+      await pca9685.setServo(0, angle);
+      // console.log('value:', angle);
+      head.innerHTML = angle;
+      await sleep(1000);
     }
-  } catch (error) {
-    console.log("ADS1015.init error" + error.message);
+  } catch (e) {
+    console.error("error", e);
   }
 }
 

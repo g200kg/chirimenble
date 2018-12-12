@@ -14,10 +14,10 @@ window.addEventListener(
 );
 
 async function mainFunction() {
-  connectButton.hidden = true;
   var bleDevice = await navigator.bluetooth.requestDevice({
     filters: [{ services: [DEVICE_UUID] }] });
   var i2cAccess = await navigator.requestI2CAccess(bleDevice);
+  connectButton.hidden = true;
   var port = i2cAccess.ports.get(1);
   try {
     var s11059 = new S11059(port, 0x2a);

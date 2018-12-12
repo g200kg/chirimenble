@@ -19,11 +19,10 @@ function ledOnOff(v){
 }
 
 async function initGPIO(){
-	connectButton.hidden = true;
         var bleDevice = await navigator.bluetooth.requestDevice({
       	  filters: [{ services: [DEVICE_UUID] }] });
 	var gpioAccess = await navigator.requestGPIOAccess(bleDevice); // thenの 前の関数をawait接頭辞をつけて呼び出します。
-
+	connectButton.hidden = true;
 	ledPort = gpioAccess.ports.get(7); // LEDのPort
 	await ledPort.export("out");
 	switchPort = gpioAccess.ports.get(5); // タクトスイッチのPort

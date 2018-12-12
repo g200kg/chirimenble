@@ -12,10 +12,10 @@ window.addEventListener(
 );
 
 async function mainFunction(){ // プログラムの本体となる関数、非同期処理のためプログラム全体をasync関数で包みます。
-	connectButton.hidden = true;
 	var bleDevice = await navigator.bluetooth.requestDevice({
       filters: [{ services: [DEVICE_UUID] }] });
 	var gpioAccess = await navigator.requestGPIOAccess(bleDevice); // thenの前の関数をawait接頭辞をつけて呼び出します。
+	connectButton.hidden = true;
 	var port = gpioAccess.ports.get(7);
 	await port.export("out");
 	var v = 0;

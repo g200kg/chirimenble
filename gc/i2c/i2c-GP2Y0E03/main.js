@@ -17,10 +17,10 @@ window.addEventListener(
 async function mainFunction() {
   var sensor_unit;
   try {
-    connectButton.hidden = true;
     var bleDevice = await navigator.bluetooth.requestDevice({
       filters: [{ services: [DEVICE_UUID] }] });
     var i2cAccess = await navigator.requestI2CAccess(bleDevice);
+    connectButton.hidden = true;
     var port = i2cAccess.ports.get(1);
     sensor_unit = new GP2Y0E03(port, 0x40);
     await sensor_unit.init();

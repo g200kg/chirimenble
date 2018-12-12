@@ -9,10 +9,10 @@ window.addEventListener('load', function (){
 }, false);
 
 async function mainFunction(){
-        connectButton.hidden = true;
         var bleDevice = await navigator.bluetooth.requestDevice({
       filters: [{ services: [DEVICE_UUID] }] });
         var gpioAccess = await navigator.requestGPIOAccess(bleDevice); // thenの 前の関数をawait接頭辞をつけて呼び出します。
+        connectButton.hidden = true;
 	console.log("GPIO ready!");
 	var port = gpioAccess.ports.get(5);
 	await port.export("in");
