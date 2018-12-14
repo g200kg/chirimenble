@@ -34,7 +34,6 @@ bone = (()=> {
 
     init: function (bleDevice) {
       return new Promise((resolve, reject)=>{
-//        console.log("@@@@@@ bone.init()");
         infoLog("bone.init()");
         if (this.status == 3) {
 	  // すでに初期化済み
@@ -104,18 +103,14 @@ bone = (()=> {
 
     },
     bleEvent: function(event) {  //ArrayBuffer
-//      console.log("@@@@@@ デバイスからの通知");
-
       var len = event.currentTarget.value.byteLength;
       var buffer = new Uint8Array(len);
       for (var cnt=0;cnt<len;cnt++) {
         buffer[cnt] = event.currentTarget.value.getInt8(cnt);
-//        console.log("@@@@@@ byte"+cnt+" data:"+buffer[cnt]);
       }
 
       if (bone.status == 2) {
         // set busy
-//        console.log("@@@@@@ set busy");
         var buf = new Uint8Array(2);
         buf[0] = 55;
         buf[1] = 0;
@@ -144,17 +139,8 @@ bone = (()=> {
 
     send: function(func,data){
       return new Promise((resolve, reject)=>{
-
-//      this.statChar.readValue().then(value => {
-//	var data = value.getUint8(0);
-//        console.log("@@@@@2 stat " + data);
-//      });
-
-
-//        console.log("@@@@@@@ bone.send()");
-//        console.log("@1");
         if(this.busy != 0) {
-	  console.log("@@@@@@@ bone.send() -- busy");
+	  console.log("bone.send() -- busy");
           return;
 	}
 	this.busy=1;
@@ -175,18 +161,13 @@ bone = (()=> {
           buf[4+cnt] = data[cnt];
         }
        
-//        console.log("@@@@@@@ bone.send()01");
         this.queue.set(this.session,(data)=>{
-//          console.log("@@@@@@@ bone.send()03");
 	  this.busy=0;
           resolve(data);
         });
         
-//        console.log("@@@@@@@ bone.send()02");
-//        this.writeChar.writeValue(buf);
         this.bleWrite(buf).then((retval)=> {
           if (retval == 0) {
-//            console.log("@@@@@@@ bone.send()02a");
           } else {
             console.log("Retry BLE write");
             this.writeChar.writeValue(retval).then(()=>{
@@ -197,19 +178,15 @@ bone = (()=> {
           }
         });
 
-
         buf=null;
         this.session ++;
         if(this.session > 0xffff){
           this.session = 0;
         }
-//      }).catch(e=>{
-//        console.log("bone.send() : ",e);
       });
     },
 
     receive: function(mes){
-//      console.log("@@@@@@@ bone.receive()");
       if(!(mes instanceof Uint8Array)){
         errLog("type error: Please using with Uint8Array buffer.");
         return;
@@ -222,11 +199,10 @@ bone = (()=> {
         for(var cnt=0;cnt < (mes.length-4);cnt++){
           data.push(mes[4+cnt]);
         }
-//        console.log("@@@@@@@ bone.receive()01");
         func(data);
         this.queue.delete(session);
       }else{
-        console.log("@@@@@@@ bone.receive()error");
+        console.log("bone.receive() -- error");
         errLog("func type error: session="+session+" func="+func);
       }
 
@@ -243,7 +219,6 @@ bone = (()=> {
     },
 
     onEvent: function(data){
- //     console.log("@@@@@@@ bone.onEvent()");
       if(!(data instanceof Uint8Array)){
         errLog("type error: Please using with Uint8Array buffer.");
         return;
@@ -305,7 +280,6 @@ var GPIOAccess = function () {
 
 GPIOAccess.prototype = {
   init: function(){
-//    console.log("@@@@@@@ GPIOAccess.init()");
     this.ports = new Map();
     for(var cnt = 0;cnt < gpioPorts.length;cnt++){
       this.ports.set(gpioPorts[cnt],new GPIOPort(gpioPorts[cnt]));
@@ -317,7 +291,6 @@ GPIOAccess.prototype = {
 };
 
 var GPIOPort = function (portNumber) {
-//  console.log("@@@@@@@ GPIOPort()");
   infoLog("GPIOPort:"+portNumber);
   this.init(portNumber);
 };
@@ -335,7 +308,6 @@ GPIOPort.prototype = {
 
   export : function(direction){
     return new Promise((resolve,reject)=>{
-//      console.log("@@@@@@@ GPIOPort.export()");
       var dir = -1;
       if(direction === 'out'){
         dir = 0;
@@ -367,7 +339,6 @@ GPIOPort.prototype = {
   },
   read : function(){
     return new Promise((resolve,reject)=>{
-//      console.log("@@@@@@@ GPIOPort.read()");
       infoLog("read: Port:"+this.portNumber);
       var data = new Uint8Array([this.portNumber]);
       bone.send(0x12,data).then((result)=>{
@@ -383,7 +354,6 @@ GPIOPort.prototype = {
   },
   write : function(value){
     return new Promise((resolve,reject)=>{
-//      console.log("@@@@@@@ GPIOPort.write()");
       infoLog("write: Port:"+this.portNumber+" value="+value);
       var data = new Uint8Array([this.portNumber,value]);
       bone.send(0x11,data).then((result)=>{
@@ -472,7 +442,6 @@ I2CSlaveDevice.prototype = {
 
   init: function (portNumber,slaveAddress) {
     return new Promise((resolve,reject)=>{
-//      console.log("@@@@@@@ I2CSlaveDevice.init()");
       this.portNumber = portNumber;
       this.slaveAddress = slaveAddress;
       var data = new Uint8Array([this.slaveAddress,1]);
@@ -506,7 +475,7 @@ I2CSlaveDevice.prototype = {
         reject(error);
       });
     },(error)=>{
-        console.log("@@@@@@ error: ",error);
+        console.log("error: ",error);
     });
   },
 
@@ -533,13 +502,11 @@ I2CSlaveDevice.prototype = {
 
   write8: function (registerNumber, value) {
     return new Promise((resolve, reject)=>{
-//      console.log("@@@@@@@ I2CSlaveDevice.write8()");
       infoLog("I2CSlaveDevice.write8() registerNumber="+registerNumber," value="+value);
       var size = 2;
       var data = new Uint8Array([this.slaveAddress,size,registerNumber,value]);
       bone.send(0x21,data).then((result)=>{
         infoLog("I2CSlaveDevice.write8() result value="+result);
-//        console.log("@@@@@@@ result.size:" + result[0]);
         if(result[0] != size){
           reject("I2CSlaveAddress("+this.slaveAddress+").write8():error")          
         }else{
@@ -661,10 +628,8 @@ I2CSlaveDevice.prototype = {
 if (!navigator.requestI2CAccess) {
   navigator.requestI2CAccess = function (bleDevice) {
     return new Promise(function(resolve,reject){
-//      console.log("@@@@@@ requestBtI2CAccess()");
       bone.init(bleDevice).then((result)=>{
         var i2cAccess = new I2CAccess();
-//        console.log("@@@@@@ i2cAccess.resolve");
         infoLog("i2cAccess.resolve");
         resolve(i2cAccess);
       }).catch(e=>{
@@ -677,11 +642,9 @@ if (!navigator.requestI2CAccess) {
 if (!navigator.requestGPIOAccess) {
   navigator.requestGPIOAccess = function (bleDevice) {
     return new Promise(function(resolve,reject){
-//      console.log("@@@@@@ requestBtGPIOAccess()");
       bone.init(bleDevice).then((result)=>{
         var gpioAccess = new GPIOAccess();
         infoLog("gpioAccess.resolve");
-//        console.log("@@@@@@ gpioAccess.resolve");
         resolve(gpioAccess);
       }).catch(e=>{
         reject(e);
