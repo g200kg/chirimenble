@@ -2,18 +2,19 @@
 #
 # cd /home/pi/
 # wget https://raw.githubusercontent.com/Nakamura2013/chirimenble/master/setup.sh
+# chmod +x setup.sh
 # ./setup.sh
 #
-# ˆê“I‚ÉƒXƒŠ[ƒv‚ğ–³Œø
+# ä¸€æ™‚çš„ã«ã‚¹ãƒªãƒ¼ãƒ—ã‚’ç„¡åŠ¹
 sudo xset s off
 sudo xset -dpms
 sudo xset s noblank
-# ƒXƒŠ[ƒv‚ğ–³Œø
+# ã‚¹ãƒªãƒ¼ãƒ—ã‚’ç„¡åŠ¹
 sudo sed '1s/$/ consoleblank=0/' /boot/cmdline.txt | sudo tee /tmp/cmdline && sudo cat /tmp/cmdline | sudo tee /boot/cmdline.txt && sudo rm -f /tmp/cmdline
 sudo sh -c "echo '@xset s off' >> /etc/xdg/lxsession/LXDE/autostart"
 sudo sh -c "echo '@xset -dpms' >> /etc/xdg/lxsession/LXDE/autostart"
 sudo sh -c "echo '@xset s noblank' >> /etc/xdg/lxsession/LXDE/autostart"
-# Œy—Ê‰»
+# è»½é‡åŒ–
 sudo apt-get -y purge wolfram-engine
 sudo apt-get -y purge minecraft-pi
 sudo apt-get -y purge scratch
@@ -25,51 +26,51 @@ sudo apt-get -y autoremove
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-# raspi‚Íupgrade¸”s‚µ‚â‚·‚¢‚Ì‚Å”O‚Ìˆ×2‰ñ
+# raspiã¯upgradeå¤±æ•—ã—ã‚„ã™ã„ã®ã§å¿µã®ç‚º2å›
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-# Šeíƒc[ƒ‹‚ğƒCƒ“ƒXƒg[ƒ‹
+# å„ç¨®ãƒ„ãƒ¼ãƒ«ã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
-# ƒCƒ“ƒXƒg[ƒ‹¸”s‚µ‚â‚·‚¢‚Ì‚Å2‰ñ
+# ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«å¤±æ•—ã—ã‚„ã™ã„ã®ã§2å›
 sudo apt-get -y install ttf-kochi-gothic fonts-noto uim uim-mozc nodejs npm apache2 vim emacs libnss3-tools
 sudo apt-get -y autoremove
 
-# ƒfƒBƒXƒvƒŒƒC‰ğ‘œ“xİ’è
+# ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤è§£åƒåº¦è¨­å®š
 echo -e 'hdmi_force_hotplug=1\nhdmi_group=2\nhdmi_mode=85\nhdmi_drive=2\n' | sudo tee -a /boot/config.txt
 
-# “ú–{Œêİ’è
+# æ—¥æœ¬èªè¨­å®š
 sudo sed 's/#\sen_GB\.UTF-8\sUTF-8/en_GB\.UTF-8 UTF-8/g' /etc/locale.gen | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
 sudo sed 's/#\sja_JP\.EUC-JP\sEUC-JP/ja_JP\.EUC-JP EUC-JP/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
 sudo sed 's/#\sja_JP\.UTF-8\sUTF-8/ja_JP\.UTF-8 UTF-8/g' /etc/locale.gen  | sudo tee /tmp/locale && sudo cat /tmp/locale | sudo tee /etc/locale.gen && sudo rm -f /tmp/locale
 sudo locale-gen ja_JP.UTF-8
 sudo update-locale LANG=ja_JP.UTF-8
 
-# ŠÔİ’è
+# æ™‚é–“è¨­å®š
 sudo raspi-config nonint do_change_timezone Japan
 
-# ƒL[ƒ{[ƒhİ’è
+# ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰è¨­å®š
 sudo raspi-config nonint do_configure_keyboard jp
 
-# ƒpƒXƒ[ƒh‚Ì•ÏX
+# ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã®å¤‰æ›´
 echo 'pi:rasp' | sudo chpasswd
 
-# ƒ_ƒEƒ“ƒ[ƒhA“WŠJ
+# ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã€å±•é–‹
 wget https://github.com/Nakamura2013/chirimenble/archive/master.zip
 unzip ./master.zip
 
-# ƒuƒ‰ƒEƒUİ’è
+# ãƒ–ãƒ©ã‚¦ã‚¶è¨­å®š
 mkdir /home/pi/.config/chromium/
 mkdir /home/pi/.config/chromium/Default/
 mv /home/pi/chirimenble-master/_gc/bookmark/Bookmarks /home/pi/.config/chromium/Default/Bookmarks
 
-# gcİ’è
+# gcè¨­å®š
 chromium-browser &
 cd /home/pi/
 mv /home/pi/chirimenble-master/gc  /home/pi/Desktop
 mv /home/pi/chirimenble-master/_gc  /home/pi
 
-# chromium‚Ì‹N“®‘Ò‚¿>>apache2 settings
+# chromiumã®èµ·å‹•å¾…ã¡>>apache2 settings
 sleep 120s
 sudo sed 's/\/var\/www\/html/\/home\/pi\/Desktop\/gc/g' /etc/apache2/sites-available/000-default.conf  | sudo tee /tmp/apache-default
 sudo cat /tmp/apache-default | sudo tee /etc/apache2/sites-available/000-default.conf
@@ -89,7 +90,7 @@ sudo systemctl restart apache2
 sudo sed 's/Exec=\/usr\/bin\/x-www-browser\s%u/Exec=\/usr\/bin\/x-www-browser --enable-experimental-web-platform-features %u/g' /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop | sudo tee /tmp/xbrowser && sudo cat /tmp/xbrowser | sudo tee /usr/share/raspi-ui-overrides/applications/lxde-x-www-browser.desktop && sudo rm -f /tmp/xbrowser
 sudo sed 's/Exec=chromium-browser/Exec=chromium-browser --enable-experimental-web-platform-features/g' /usr/share/applications/chromium-browser.desktop | sudo tee /tmp/chbrowser && sudo cat /tmp/chbrowser | sudo tee /usr/share/applications/chromium-browser.desktop && sudo rm -f /tmp/chbrowser
 
-# Ø–¾‘’Ç‰Á
+# è¨¼æ˜æ›¸è¿½åŠ 
 certfile="/home/pi/_gc/srv/crt/ca.crt"
 certname="org-TripArts"
 
@@ -99,7 +100,7 @@ do
     certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d sql:${certdir}
 done
 
-# ‘|œ
+# æƒé™¤
 rm -rf /home/pi/chirimenble-master
 rm master.zip
 
