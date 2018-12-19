@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# version 2018/12/19 16:30
 # cd /home/pi/
 # wget https://raw.githubusercontent.com/Nakamura2013/chirimenble/master/setup.sh
 # chmod +x setup.sh
